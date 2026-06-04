@@ -1,0 +1,80 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "schema": "https://schema.org/",
+    "dct": "http://purl.org/dc/terms/",
+    "oai": "http://www.openarchives.org/OAI/2.0/",
+    "@vocab": "https://livrepository.liverpool.ac.uk/ns#",
+
+    "University": "schema:CollegeOrUniversity",
+    "name": "schema:name",
+    "description": "schema:description",
+    "url": "schema:url",
+    "logo": "schema:logo",
+    "sameAs": "schema:sameAs",
+
+    "API": "schema:WebAPI",
+    "apis": {
+      "@id": "schema:potentialAction",
+      "@container": "@set"
+    },
+    "humanURL": {
+      "@id": "schema:documentation",
+      "@type": "@id"
+    },
+    "baseURL": {
+      "@id": "schema:url",
+      "@type": "@id"
+    },
+
+    "Repository": "schema:DataCatalog",
+    "dataset": "schema:dataset",
+    "Dataset": "schema:Dataset",
+    "record": "oai:record",
+    "identifier": {
+      "@id": "dct:identifier",
+      "@type": "@id"
+    },
+    "datestamp": {
+      "@id": "dct:modified",
+      "@type": "schema:DateTime"
+    },
+    "setSpec": "oai:setSpec",
+    "metadataPrefix": "oai:metadataPrefix",
+
+    "creator": "dct:creator",
+    "title": "dct:title",
+    "subject": "dct:subject",
+    "publisher": "dct:publisher",
+    "date": {
+      "@id": "dct:date",
+      "@type": "schema:Date"
+    },
+    "type": "dct:type",
+    "format": "dct:format",
+    "language": "dct:language",
+    "rights": "dct:rights"
+  },
+  "@type": "University",
+  "name": "University of Liverpool",
+  "url": "https://www.liverpool.ac.uk/",
+  "description": "A public research university in Liverpool, United Kingdom, and a founding member of the Russell Group. Its public, machine-readable footprint is centered on EPrints-based scholarly and research-data repositories exposing OAI-PMH 2.0 metadata-harvesting interfaces.",
+  "sameAs": [
+    "https://github.com/livuni",
+    "https://www.linkedin.com/school/university-of-liverpool/"
+  ],
+  "apis": [
+    {
+      "@type": ["API", "Repository"],
+      "name": "University of Liverpool Repository OAI-PMH",
+      "humanURL": "https://livrepository.liverpool.ac.uk/information.html",
+      "baseURL": "https://livrepository.liverpool.ac.uk/cgi/oai2"
+    },
+    {
+      "@type": ["API", "Repository"],
+      "name": "DataCat Research Data Catalogue OAI-PMH",
+      "humanURL": "http://datacat.liverpool.ac.uk/information.html",
+      "baseURL": "https://datacat.liverpool.ac.uk/cgi/oai2"
+    }
+  ]
+}
