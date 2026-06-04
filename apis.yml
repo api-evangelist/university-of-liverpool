@@ -1,0 +1,78 @@
+---
+aid: university-of-liverpool
+name: University of Liverpool
+description: >-
+  The University of Liverpool is a public research university in Liverpool,
+  United Kingdom, a founding member of the Russell Group, ranked #165 in the QS
+  World University Rankings 2025. Its public, machine-readable developer
+  footprint is centered on scholarly and research-data infrastructure rather
+  than a unified developer portal: the EPrints-based University of Liverpool
+  Repository and the DataCat research data catalogue both expose live OAI-PMH
+  metadata-harvesting interfaces. No general-purpose public API developer
+  portal, course/timetable API, or self-service API key program was found to be
+  publicly documented at the time of review; most institutional systems
+  (SSO/IdP, student administration, mobile backends) sit behind authentication
+  and are not publicly cataloged.
+type: Index
+position: Consumer
+access: 3rd-Party
+image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
+url: https://raw.githubusercontent.com/api-evangelist/university-of-liverpool/refs/heads/main/apis.yml
+tags:
+  - Education
+  - Higher Education
+  - University
+  - Research
+  - Open Access
+  - Repository
+  - OAI-PMH
+  - United Kingdom
+created: '2026-06-03'
+modified: '2026-06-03'
+specificationVersion: '0.19'
+apis:
+  - aid: university-of-liverpool:repository-oai
+    name: University of Liverpool Repository OAI-PMH
+    description: >-
+      OAI-PMH 2.0 metadata-harvesting interface for the University of Liverpool
+      Repository, an EPrints-based open-access archive of research outputs
+      (journal articles, conference papers, theses, reports, and books).
+      Verified live, serving multiple metadata formats including oai_dc, mets,
+      didl, rdf, rioxx, and uketd_dc.
+    humanURL: https://livrepository.liverpool.ac.uk/information.html
+    baseURL: https://livrepository.liverpool.ac.uk/cgi/oai2
+    tags: [ Repository, OAI-PMH, Open Access, Research, EPrints, Metadata ]
+    properties:
+      - type: Documentation
+        url: https://livrepository.liverpool.ac.uk/information.html
+  - aid: university-of-liverpool:datacat-oai
+    name: DataCat Research Data Catalogue OAI-PMH
+    description: >-
+      OAI-PMH 2.0 metadata-harvesting interface for DataCat, the University of
+      Liverpool research data catalogue (EPrints-based), exposing metadata
+      records for finalised research datasets. Verified live and responding to
+      the Identify verb.
+    humanURL: http://datacat.liverpool.ac.uk/information.html
+    baseURL: https://datacat.liverpool.ac.uk/cgi/oai2
+    tags: [ Repository, OAI-PMH, Research Data, Metadata, EPrints ]
+    properties:
+      - type: Documentation
+        url: http://datacat.liverpool.ac.uk/information.html
+common:
+  - type: Website
+    url: https://www.liverpool.ac.uk/
+  - type: GitHub
+    url: https://github.com/livuni
+  - type: LinkedIn
+    url: https://www.linkedin.com/school/university-of-liverpool/
+  - type: Plans
+    url: plans/university-of-liverpool-plans-pricing.yml
+  - type: RateLimits
+    url: rate-limits/university-of-liverpool-rate-limits.yml
+  - type: FinOps
+    url: finops/university-of-liverpool-finops.yml
+  - type: Review
+    url: review.yml
+maintainers:
+  - FN: Kin Lane
+    email: kin@apievangelist.com
