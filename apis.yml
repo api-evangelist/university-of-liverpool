@@ -59,6 +59,8 @@ apis:
       - type: Documentation
         url: http://datacat.liverpool.ac.uk/information.html
 common:
+  - type: DomainSecurity
+    url: security/university-of-liverpool-domain-security.yml
   - type: Website
     url: https://www.liverpool.ac.uk/
   - type: GitHub
