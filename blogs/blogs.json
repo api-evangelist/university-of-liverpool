@@ -5,10 +5,10 @@
       "source": "https://news.liverpool.ac.uk/",
       "feed_url": "https://news.liverpool.ac.uk/feed/",
       "title": "University of Liverpool News",
-      "saved": 0,
-      "method": "none"
+      "saved": 19,
+      "method": "rss"
     }
   ],
-  "post_count": 0,
-  "fetched": "2026-06-03T00:00:00Z"
+  "post_count": 32,
+  "fetched": "2026-07-11T11:43:46Z"
 }
