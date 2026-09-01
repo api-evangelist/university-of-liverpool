@@ -1,18 +1,27 @@
 ---
 aid: university-of-liverpool
 name: University of Liverpool
+x-type: university
+x-category: Public Research University
 description: >-
-  The University of Liverpool is a public research university in Liverpool,
-  United Kingdom, a founding member of the Russell Group, ranked #165 in the QS
-  World University Rankings 2025. Its public, machine-readable developer
-  footprint is centered on scholarly and research-data infrastructure rather
-  than a unified developer portal: the EPrints-based University of Liverpool
-  Repository and the DataCat research data catalogue both expose live OAI-PMH
-  metadata-harvesting interfaces. No general-purpose public API developer
-  portal, course/timetable API, or self-service API key program was found to be
-  publicly documented at the time of review; most institutional systems
-  (SSO/IdP, student administration, mobile backends) sit behind authentication
-  and are not publicly cataloged.
+  The University of Liverpool is a public research university in Liverpool, United Kingdom, a
+  founding member of the Russell Group and of the civic "red brick" universities. It runs no public
+  developer portal, publishes no OpenAPI, issues no API keys, and this profile does not pretend
+  otherwise. What it does operate, on its own liverpool.ac.uk and liv.ac.uk hosts, are five genuinely
+  institution-run machine surfaces: two EPrints OAI-PMH 2.0 providers — the University of Liverpool
+  Repository (EPrints 3.4.5, eight metadata formats including RIOXX and uketd_dc) and DataCat, the
+  research data catalogue (EPrints 3.4.4) — a keyless EPrints REST read interface on the repository,
+  an Active Directory Federation Services OAuth 2.0 / OpenID Connect authorization server at
+  fs.liverpool.ac.uk whose discovery document and JWKS are public, and a Shibboleth SAML 2.0 identity
+  provider registered in the UK Access Management Federation and visible in eduGAIN. Its DataCite
+  membership (BL.LPOOL, prefix 10.17638, 16,405 DOIs resolving into its own repository), its ORCID
+  affiliation programme, its ROR record and its Crossref presence through Liverpool University Press
+  are all verifiable from public endpoints. Alongside these it is a tenant on four vendor platforms —
+  Ex Libris Alma/Primo VE, Talis Aspire reading lists, Instructure Canvas and Symplectic Elements —
+  whose contracts belong to those vendors, not to Liverpool. Student records, timetabling, module
+  enrolment and the VLE sit behind SSO and are not publicly documented APIs. One trap worth
+  recording: livrepository.liverpool.ac.uk returns 403 to a desktop-browser User-Agent and 200 to a
+  harvester, so a browser-only probe grades a live repository dead.
 type: Index
 deliveryModel:
   model: saas
@@ -45,51 +54,313 @@ tags:
   - Education
   - Higher Education
   - University
-  - Research
-  - Open Access
-  - Repository
-  - OAI-PMH
+  - Russell Group
   - United Kingdom
+  - Research
+  - Research Repository
+  - Research Data
+  - Open Access
+  - OAI-PMH
+  - EPrints
+  - Identity Federation
+  - Library
+  - Metadata
 created: '2026-06-03'
-modified: '2026-06-03'
+modified: '2026-09-01'
 specificationVersion: '0.23'
 apis:
   - aid: university-of-liverpool:repository-oai
     name: University of Liverpool Repository OAI-PMH
+    x-operator: institution
     description: >-
-      OAI-PMH 2.0 metadata-harvesting interface for the University of Liverpool
-      Repository, an EPrints-based open-access archive of research outputs
-      (journal articles, conference papers, theses, reports, and books).
-      Verified live, serving multiple metadata formats including oai_dc, mets,
-      didl, rdf, rioxx, and uketd_dc.
+      OAI-PMH 2.0 metadata-harvesting interface for the University of Liverpool Repository, an
+      EPrints 3.4.5 open-access archive of research outputs (journal articles, conference papers,
+      theses, reports and books), served from the institution's own host. Verified live 2026-09-01:
+      verb=Identify returns 200 with repositoryName "The University of Liverpool Repository",
+      repositoryIdentifier livrepository.liverpool.ac.uk, deletedRecord "persistent", granularity
+      YYYY-MM-DDThh:mm:ssZ, earliestDatestamp 2016-03-29T13:54:54Z and full metadata, data and
+      submission policy statements. verb=ListMetadataFormats returns eight prefixes — didl, mets,
+      oai_bibl, oai_dc, primo_dc, rdf, rioxx and uketd_dc (the UK EThOS thesis profile). The EPrints
+      software is the University of Southampton's; the deployment, the host, the DOIs and the data
+      are Liverpool's, and no EPrints product contract is saved under this institution. Note the
+      User-Agent filter on this host: 200 to a harvester UA, 403 to a desktop-browser UA.
     humanURL: https://livrepository.liverpool.ac.uk/information.html
     baseURL: https://livrepository.liverpool.ac.uk/cgi/oai2
-    tags: [ Repository, OAI-PMH, Open Access, Research, EPrints, Metadata ]
+    tags: [ Repository, OAI-PMH, Open Access, Research, EPrints, RIOXX, Metadata ]
     properties:
       - type: Documentation
         url: https://livrepository.liverpool.ac.uk/information.html
+      - type: Conformance
+        url: conformance/university-of-liverpool-conformance.yml
+      - type: Errors
+        url: errors/university-of-liverpool-oai-error-codes.yml
+  - aid: university-of-liverpool:repository-rest
+    name: University of Liverpool Repository EPrints REST
+    x-operator: institution
+    description: >-
+      Keyless, read-only EPrints REST interface on the institutional repository. Verified live
+      2026-09-01: GET /rest/ returns 200 listing the eprint, user and subject datasets, and GET
+      /rest/eprint/ returns 200 with 7,456,493 bytes enumerating every eprint id in the repository —
+      no key, no token, no registration. The equivalent path on DataCat is configured differently:
+      GET https://datacat.liverpool.ac.uk/rest/ returns 200 but the item fetch
+      /rest/eprint/2481.xml returns 401, so the two EPrints deployments do not share an access
+      posture. As with the OAI-PMH interface, the contract is the EPrints product's and is not saved
+      here; the deployment and the data are the institution's.
+    humanURL: https://livrepository.liverpool.ac.uk/information.html
+    baseURL: https://livrepository.liverpool.ac.uk/rest/
+    tags: [ Repository, REST, EPrints, Open Access, Research, Metadata ]
+    properties:
+      - type: Authentication
+        url: authentication/university-of-liverpool-authentication.yml
   - aid: university-of-liverpool:datacat-oai
     name: DataCat Research Data Catalogue OAI-PMH
+    x-operator: institution
     description: >-
-      OAI-PMH 2.0 metadata-harvesting interface for DataCat, the University of
-      Liverpool research data catalogue (EPrints-based), exposing metadata
-      records for finalised research datasets. Verified live and responding to
-      the Identify verb.
-    humanURL: http://datacat.liverpool.ac.uk/information.html
+      OAI-PMH 2.0 metadata-harvesting interface for DataCat, the University of Liverpool research
+      data catalogue (EPrints 3.4.4), exposing metadata for finalised research datasets. Verified
+      live 2026-09-01: verb=Identify returns 200 with repositoryName "DataCat: The Research Data
+      Catalogue", repositoryIdentifier datacat.liverpool.ac.uk, earliestDatestamp
+      2026-04-14T08:58:23Z and deletedRecord "persistent"; verb=ListMetadataFormats returns didl,
+      mets, oai_bibl, oai_dc, rdf and uketd_dc; verb=ListSets returns 61,189 bytes of set structure.
+      Institution-hosted and institution-operated; the EPrints contract is not saved here.
+    humanURL: https://datacat.liverpool.ac.uk/information.html
     baseURL: https://datacat.liverpool.ac.uk/cgi/oai2
     tags: [ Repository, OAI-PMH, Research Data, Metadata, EPrints ]
     properties:
       - type: Documentation
-        url: http://datacat.liverpool.ac.uk/information.html
+        url: https://datacat.liverpool.ac.uk/information.html
+      - type: Errors
+        url: errors/university-of-liverpool-oai-error-codes.yml
+  - aid: university-of-liverpool:adfs-oauth-oidc
+    name: University of Liverpool AD FS OAuth 2.0 / OpenID Connect
+    x-operator: institution
+    description: >-
+      Institution-operated Active Directory Federation Services authorization server on the
+      university's own host, with a public, keyless discovery document. Verified live 2026-09-01:
+      https://fs.liverpool.ac.uk/adfs/.well-known/openid-configuration returns 200 with issuer
+      https://fs.liverpool.ac.uk/adfs, authorization, token and userinfo endpoints, RS256 id-token
+      signing, nine supported scopes and nine grant types including device_code and jwt-bearer;
+      https://fs.liverpool.ac.uk/adfs/discovery/keys returns 200 with a live RSA signing key. The
+      same deployment publishes SAML 2.0 / WS-Federation metadata at
+      /FederationMetadata/2007-06/FederationMetadata.xml (200, application/samlmetadata+xml, 83,212
+      bytes, entityID http://fs.liverpool.ac.uk/adfs/services/trust) and is the SP-initiated login
+      target for the university's Canvas VLE. This is the closest thing the institution has to a
+      published, machine-readable API contract of its own, and there is no self-service client
+      registration behind it.
+    humanURL: https://fs.liverpool.ac.uk/adfs/ls/idpinitiatedsignon
+    baseURL: https://fs.liverpool.ac.uk/adfs/.well-known/openid-configuration
+    tags: [ Identity Federation, OpenID Connect, OAuth 2.0, SAML, Single Sign-On, Authentication ]
+    properties:
+      - type: OpenIDConnectDiscovery
+        url: https://fs.liverpool.ac.uk/adfs/.well-known/openid-configuration
+      - type: Authentication
+        url: authentication/university-of-liverpool-authentication.yml
+      - type: Scopes
+        url: scopes/university-of-liverpool-scopes.yml
+  - aid: university-of-liverpool:identity-federation
+    name: University of Liverpool Shibboleth IdP (UK Access Management Federation)
+    x-operator: federation
+    description: >-
+      Institution-operated Shibboleth SAML 2.0 identity provider, registered in the UK Access
+      Management Federation and visible in eduGAIN. entityID
+      urn:mace:eduserv.org.uk:athens:provider:liv.ac.uk, mdui:DisplayName "University of Liverpool",
+      scope liv.ac.uk, registrationAuthority http://ukfederation.org.uk, Sirtfi asserted. The
+      federation MDQ service serves the metadata live — 200, 9,390 bytes — and the IdP self-publishes
+      the same document at https://shibboleth3.liv.ac.uk/idp/shibboleth (200, application/xml). SSO
+      endpoints run under https://shibboleth3.liv.ac.uk/idp/profile/SAML2/{Redirect,POST,
+      POST-SimpleSign}/SSO with SLO and SAML1 SOAP artifact resolution on port 8443; the
+      Redirect/SSO endpoint returns 400 to a parameterless GET, which is a live IdP rejecting a
+      malformed AuthnRequest. Two non-production entities registered under the same institution
+      (shibboleth2.liv.ac.uk "University of Liverpool (TEST do not use)" and shibboleth3.liv.ac.uk
+      "University of Liverpool - Test") are excluded as placeholders. A federation is shared by
+      definition; the IdP behind this entry is Liverpool's.
+    humanURL: https://www.ukfederation.org.uk/
+    baseURL: http://mdq.ukfederation.org.uk/entities/urn%3Amace%3Aeduserv.org.uk%3Aathens%3Aprovider%3Aliv.ac.uk
+    tags: [ Identity Federation, SAML, Shibboleth, eduGAIN, Single Sign-On, Authentication ]
+    properties:
+      - type: Documentation
+        url: https://www.ukfederation.org.uk/
+      - type: Conformance
+        url: conformance/university-of-liverpool-conformance.yml
+  - aid: university-of-liverpool:entra-tenant
+    name: University of Liverpool Microsoft Entra ID tenant
+    x-operator: federation
+    description: >-
+      The institution's own Microsoft Entra ID tenant, discoverable by its domain name. Verified live
+      2026-09-01: https://login.microsoftonline.com/liverpool.ac.uk/v2.0/.well-known/openid-configuration
+      returns 200 with issuer https://login.microsoftonline.com/53255131-b129-4010-86e1-474bfd7e8076/v2.0
+      and tenant_region_scope EU. Microsoft operates the platform; the tenant, the directory and the
+      identities are Liverpool's. Recorded as a federation relationship — no Microsoft contract is
+      saved under this institution.
+    humanURL: https://www.liverpool.ac.uk/it/
+    baseURL: https://login.microsoftonline.com/liverpool.ac.uk/v2.0/.well-known/openid-configuration
+    tags: [ Identity Federation, OpenID Connect, Entra ID, Single Sign-On, Authentication ]
+    properties:
+      - type: Authentication
+        url: authentication/university-of-liverpool-authentication.yml
+  - aid: university-of-liverpool:datacite-membership
+    name: DataCite repository membership (BL.LPOOL)
+    x-operator: registry
+    description: >-
+      The University of Liverpool is a DataCite repository member and has been since 2015. Verified
+      2026-09-01: https://api.datacite.org/clients/bl.lpool returns 200 with name "University of
+      Liverpool", symbol BL.LPOOL, clientType repository, created 2015-04-29 and declared domains
+      liv.ac.uk, liverpool.ac.uk, datacat.liverpool.ac.uk and livrepository.liverpool.ac.uk. One DOI
+      prefix, 10.17638, is bound to the client, and 16,405 DOIs are registered under it — the first
+      of which, 10.17638/03200178, resolves to https://livrepository.liverpool.ac.uk/id/eprint/3200178,
+      i.e. into the institution's own repository rather than a vendor host. This is a fact about the
+      institution recorded through a shared registry; DataCite's own contract is not saved here.
+    humanURL: https://www.liverpool.ac.uk/open-research/
+    baseURL: https://api.datacite.org/clients/bl.lpool
+    tags: [ Registry, DataCite, DOI, Persistent Identifiers, Research Data ]
+  - aid: university-of-liverpool:orcid-membership
+    name: ORCID affiliation programme (UK ORCID consortium)
+    x-operator: registry
+    description: >-
+      The University of Liverpool Library operates an ORCID member integration through the Jisc-run
+      UK ORCID consortium, sending affiliation invitations to research staff and PGR students via the
+      ORCID Affiliation Manager and syncing publications between ORCID and the Liverpool Elements
+      CRIS. Verified 2026-09-01: the ORCID public API returns 13,225 records carrying "University of
+      Liverpool" as an affiliation, and the library documents the programme at
+      https://libguides.liverpool.ac.uk/blog/ORCID-Affiliation-Project (200) and
+      https://www.liverpool.ac.uk/open-research/researcher-profiles/orcid/ (200). Registry
+      membership, not a Liverpool contract — ORCID's API is ORCID's.
+    humanURL: https://www.liverpool.ac.uk/open-research/researcher-profiles/orcid/
+    baseURL: https://pub.orcid.org/v3.0/expanded-search/?q=affiliation-org-name:%22University%20of%20Liverpool%22
+    tags: [ Registry, ORCID, Persistent Identifiers, Research, Open Research ]
+  - aid: university-of-liverpool:ror-record
+    name: ROR organisation record (04xs57h96)
+    x-operator: registry
+    description: >-
+      The institution's entry in the Research Organization Registry. Verified 2026-09-01:
+      https://api.ror.org/v2/organizations/04xs57h96 returns 200 with display names "University of
+      Liverpool" and "Prifysgol Lerpwl", and external identifiers Crossref Funder Registry
+      501100000836, GRID grid.10025.36, ISNI 0000 0004 1936 8470 and Wikidata Q499510. Registry
+      membership; ROR's API belongs to ROR.
+    humanURL: https://ror.org/04xs57h96
+    baseURL: https://api.ror.org/v2/organizations/04xs57h96
+    tags: [ Registry, ROR, Persistent Identifiers, Organisation Identifiers ]
+  - aid: university-of-liverpool:crossref-membership
+    name: Crossref membership via Liverpool University Press (member 2165)
+    x-operator: registry
+    description: >-
+      Liverpool University Press, the University's own publishing house, is Crossref member 2165.
+      Verified 2026-09-01: https://api.crossref.org/members/2165 returns 200 with primary-name
+      "Liverpool University Press", location "Liverpool, United Kingdom", DOI prefix 10.3828 and
+      114,739 registered DOIs. A Crossref member query for "liverpool" returns this record and no
+      other, so the institution registers no Crossref prefix in its own name; it does hold Crossref
+      Funder Registry ID 501100000836. Recorded narrowly, as the press's membership, not as a
+      university-wide Crossref API.
+    humanURL: https://www.liverpool.ac.uk/liverpool-university-press/
+    baseURL: https://api.crossref.org/members/2165
+    tags: [ Registry, Crossref, DOI, Publishing, Persistent Identifiers ]
+  - aid: university-of-liverpool:library-discovery
+    name: Library discovery (Ex Libris Alma / Primo VE tenant)
+    x-operator: tenant
+    description: >-
+      Library resource management and discovery on Ex Libris Alma and Primo VE, operated as a
+      Liverpool tenant. Verified 2026-09-01: https://liverpool.primo.exlibrisgroup.com/discovery/search?vid=44LIV_INST:LIV
+      returns 200, and both liverpool.alma.exlibrisgroup.com and liverpool.primo.exlibrisgroup.com are
+      registered in the UK Access Management Federation as SAML service providers named "University of
+      Liverpool - Alma" and "University of Liverpool - PrimoVE" — under the Ex Libris (UK) Limited
+      entity, not Liverpool's. The Alma and Primo APIs are Ex Libris's and are not saved here; only
+      the tenant relationship is recorded. library.liverpool.ac.uk redirects to OpenAthens
+      (eu.libauth.com/login/saml), and libguides./libanswers.liverpool.ac.uk are Springshare tenants
+      on institution CNAMEs.
+    humanURL: https://liverpool.primo.exlibrisgroup.com/discovery/search?vid=44LIV_INST:LIV
+    tags: [ Library, Discovery, Ex Libris, Primo, Alma, Tenant ]
+  - aid: university-of-liverpool:reading-lists
+    name: Reading lists (Talis Aspire tenant)
+    x-operator: tenant
+    description: >-
+      Talis Aspire reading lists, operated as a Liverpool tenant at liverpool.rl.talis.com with the
+      canonical institutional URI http://readinglists.liverpool.ac.uk/. Genuinely machine-readable:
+      https://liverpool.rl.talis.com/index.json returns 200 application/json (9,166 bytes) of RDF
+      describing the institution as an aiiso:Institution named "University of Liverpool" with five
+      faculty organizationalUnits. The Talis Aspire contract and vocabulary are Talis's; the lists,
+      the structure and the data are Liverpool's. readinglists.liverpool.ac.uk itself presents a
+      certificate that does not match the host, so the talis.com hostname is the usable one.
+    humanURL: https://liverpool.rl.talis.com/index.html
+    baseURL: https://liverpool.rl.talis.com/index.json
+    tags: [ Library, Reading Lists, Talis Aspire, Linked Data, RDF, Tenant ]
+  - aid: university-of-liverpool:vle-lti
+    name: Canvas VLE and LTI 1.3 platform (Instructure tenant)
+    x-operator: tenant
+    description: >-
+      The university's virtual learning environment is Instructure Canvas on the institution CNAME
+      canvas.liverpool.ac.uk, authenticating through Liverpool's own AD FS. Verified 2026-09-01: the
+      root URL 302s into https://fs.liverpool.ac.uk/adfs/ls/ with a signed SAMLRequest;
+      https://canvas.liverpool.ac.uk/api/lti/security/jwks returns 200 application/json with a live
+      LTI 1.3 platform RSA key set; https://canvas.liverpool.ac.uk/api/v1/accounts returns 401, so
+      the data API is closed. The LTI implementation and the Canvas API contract are Instructure's;
+      the tenant, the courses and the identity binding are Liverpool's. No Instructure contract is
+      saved here.
+    humanURL: https://canvas.liverpool.ac.uk/
+    baseURL: https://canvas.liverpool.ac.uk/api/lti/security/jwks
+    tags: [ VLE, LMS, LTI, Canvas, Instructure, Tenant ]
+    properties:
+      - type: Conformance
+        url: conformance/university-of-liverpool-conformance.yml
+  - aid: university-of-liverpool:research-information
+    name: Liverpool Elements research information system (Symplectic tenant)
+    x-operator: tenant
+    description: >-
+      Liverpool Elements, the university's current research information system, runs at
+      elements.liverpool.ac.uk — an institution host resolving to 138.253.242.19. Verified
+      2026-09-01: the landing page returns 401 (Auth Required) at
+      /homepage.html?em=false, so there is no public read surface and no published contract. Elements
+      is Symplectic's product; the CRIS records, the ORCID sync and the researcher profiles are
+      Liverpool's. Recorded as a tenant relationship for completeness — no Symplectic contract is
+      saved here, and nothing about this system is machine-readable without credentials.
+    humanURL: https://www.liverpool.ac.uk/open-research/researcher-profiles/
+    tags: [ Research Information, CRIS, Symplectic Elements, Tenant, Gated ]
 common:
-  - type: DomainSecurity
-    url: security/university-of-liverpool-domain-security.yml
   - type: Website
     url: https://www.liverpool.ac.uk/
-  - type: GitHub
+  - type: ResearchRepository
+    url: https://livrepository.liverpool.ac.uk/
+  - type: OpenData
+    url: https://datacat.liverpool.ac.uk/
+  - type: LibraryCatalog
+    url: https://liverpool.primo.exlibrisgroup.com/discovery/search?vid=44LIV_INST:LIV
+  - type: CourseCatalog
+    url: https://www.liverpool.ac.uk/courses/undergraduate
+  - type: IdentityFederation
+    url: https://www.ukfederation.org.uk/
+  - type: ResearchComputing
+    url: https://www.liverpool.ac.uk/research-it/
+  - type: AIPolicy
+    url: https://www.liverpool.ac.uk/about/the-university/reports-policies-and-governance/ai-at-liverpool/policies-and-guidance/
+  - type: AITooling
+    url: https://www.liverpool.ac.uk/about/the-university/reports-policies-and-governance/ai-at-liverpool/support-and-activities/
+  - type: Documentation
+    url: https://www.liverpool.ac.uk/open-research/
+  - type: Support
+    url: https://libanswers.liverpool.ac.uk/
+  - type: Blog
+    url: https://news.liverpool.ac.uk/
+  - type: BlogRSS
+    url: https://news.liverpool.ac.uk/feed/
+  - type: PrivacyPolicy
+    url: https://www.liverpool.ac.uk/legal/data_protection/privacy-notices/
+  - type: TermsOfService
+    url: https://www.liverpool.ac.uk/legal/
+  - type: Accessibility
+    url: https://www.liverpool.ac.uk/accessibility/
+  - type: GitHubOrganization
     url: https://github.com/livuni
   - type: LinkedIn
     url: https://www.linkedin.com/school/university-of-liverpool/
+  - type: Conformance
+    url: conformance/university-of-liverpool-conformance.yml
+  - type: Authentication
+    url: authentication/university-of-liverpool-authentication.yml
+  - type: Scopes
+    url: scopes/university-of-liverpool-scopes.yml
+  - type: Errors
+    url: errors/university-of-liverpool-oai-error-codes.yml
+  - type: DomainSecurity
+    url: security/university-of-liverpool-domain-security.yml
   - type: Plans
     url: plans/university-of-liverpool-plans-pricing.yml
   - type: RateLimits
@@ -98,6 +369,70 @@ common:
     url: finops/university-of-liverpool-finops.yml
   - type: Review
     url: review.yml
+x-coverage:
+  state: covered
+  reason: covered
+  detail: >-
+    Five institution-operated machine surfaces were found and verified live on 2026-09-01 — two
+    EPrints OAI-PMH 2.0 providers (livrepository and datacat), a keyless EPrints REST read interface,
+    an AD FS OAuth 2.0/OpenID Connect authorization server with public discovery and JWKS at
+    fs.liverpool.ac.uk, and a Shibboleth SAML 2.0 IdP published in the UK Access Management
+    Federation and eduGAIN — plus a Microsoft Entra ID tenant and four registry memberships
+    (DataCite BL.LPOOL/10.17638, ORCID via the UK consortium, ROR 04xs57h96, Crossref through
+    Liverpool University Press). Seven of the twelve education-regime domain standards are evidenced
+    from public endpoints: oai-pmh, shibboleth, saml, orcid, datacite, crossref and lti (the last on
+    a tenant). Four vendor platforms are recorded as tenant relationships rather than as Liverpool
+    contracts: Ex Libris Alma/Primo VE, Talis Aspire, Instructure Canvas and Symplectic Elements. No
+    OpenAPI, no developer portal, no self-service key issuance and no course/timetable API exist
+    anywhere on the institution's public surface, and none has been generated to stand in for one —
+    the EPrints, DSpace-style, Canvas and Elements contracts are product contracts shared by every
+    deployment of that software and belong in the vendor's own repo, not here. Two negative findings
+    worth keeping: livrepository.liverpool.ac.uk answers 403 to a desktop-browser User-Agent and 200
+    to a harvester, and the institution's WordPress newsroom gates /wp-json while leaving RSS open.
+    No .well-known/security.txt, llms.txt or apis.json is served on www.liverpool.ac.uk (all 404).
+  generated: '2026-09-01'
+  method: probed
+  evidence:
+    - url: https://livrepository.liverpool.ac.uk/cgi/oai2?verb=Identify
+      status: 200
+    - url: https://livrepository.liverpool.ac.uk/rest/eprint/
+      status: 200
+    - url: https://datacat.liverpool.ac.uk/cgi/oai2?verb=Identify
+      status: 200
+    - url: https://datacat.liverpool.ac.uk/cgi/oai2?verb=ListSets
+      status: 200
+    - url: https://fs.liverpool.ac.uk/adfs/.well-known/openid-configuration
+      status: 200
+    - url: https://fs.liverpool.ac.uk/adfs/discovery/keys
+      status: 200
+    - url: https://fs.liverpool.ac.uk/FederationMetadata/2007-06/FederationMetadata.xml
+      status: 200
+    - url: http://mdq.ukfederation.org.uk/entities/urn%3Amace%3Aeduserv.org.uk%3Aathens%3Aprovider%3Aliv.ac.uk
+      status: 200
+    - url: https://shibboleth3.liv.ac.uk/idp/shibboleth
+      status: 200
+    - url: https://login.microsoftonline.com/liverpool.ac.uk/v2.0/.well-known/openid-configuration
+      status: 200
+    - url: https://api.datacite.org/clients/bl.lpool
+      status: 200
+    - url: https://api.ror.org/v2/organizations/04xs57h96
+      status: 200
+    - url: https://api.crossref.org/members/2165
+      status: 200
+    - url: https://liverpool.rl.talis.com/index.json
+      status: 200
+    - url: https://canvas.liverpool.ac.uk/api/lti/security/jwks
+      status: 200
+    - url: https://canvas.liverpool.ac.uk/api/v1/accounts
+      status: 401
+    - url: https://elements.liverpool.ac.uk/
+      status: 401
+    - url: https://news.liverpool.ac.uk/wp-json/wp/v2/posts
+      status: 401
+    - url: https://www.liverpool.ac.uk/.well-known/security.txt
+      status: 404
+    - url: https://data.liverpool.ac.uk/
+      status: 0
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
