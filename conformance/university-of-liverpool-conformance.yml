@@ -1,0 +1,153 @@
+generated: '2026-09-01'
+method: probed
+source: >-
+  Live probes of University of Liverpool institution-operated hosts on 2026-09-01, plus the UK
+  Access Management Federation MDQ service, the eduGAIN entity database, and the DataCite, ROR,
+  Crossref and ORCID public REST APIs.
+docs: https://www.liverpool.ac.uk/open-research/
+note: >-
+  Conformance against the Kin Score `education` regime standards[]. Every entry below was reached by
+  fetching the named URL and reading the response body — none is a prose claim lifted from a
+  university web page. Standards the institution does not publicly expose are recorded as
+  conforms:false with the negative probe that established it, and are never inferred from the
+  presence of a vendor product. The two EPrints OAI-PMH providers, the EPrints REST interface, the
+  AD FS OAuth 2.0/OpenID Connect authorization server and the Shibboleth IdP are institution
+  operated; the Ex Libris Alma/Primo VE, Talis Aspire, Instructure Canvas and Symplectic Elements
+  surfaces are tenant deployments and are labelled as such wherever they are used as evidence.
+  Note the User-Agent trap on livrepository.liverpool.ac.uk: it returns 403 to a desktop-browser
+  User-Agent and 200 to curl's default or an OAI harvester UA. The host is live; a browser-UA probe
+  alone would have graded it dead.
+standards:
+- id: oai-pmh
+  conforms: true
+  operator: institution
+  evidence: >-
+    Two live OAI-PMH 2.0 providers on the institution's own hosts.
+    https://livrepository.liverpool.ac.uk/cgi/oai2?verb=Identify returns 200 with repositoryName
+    "The University of Liverpool Repository", baseURL https://livrepository.liverpool.ac.uk/cgi/oai2,
+    protocolVersion 2.0, repositoryIdentifier livrepository.liverpool.ac.uk, deletedRecord
+    "persistent", granularity YYYY-MM-DDThh:mm:ssZ, earliestDatestamp 2016-03-29T13:54:54Z,
+    adminEmail jkerwin@liverpool.ac.uk, and an eprints description block declaring metadata, data and
+    submission policies. verb=ListMetadataFormats returns eight prefixes: didl, mets, oai_bibl,
+    oai_dc, primo_dc, rdf, rioxx and uketd_dc (the UK EThOS thesis profile). Software self-declared
+    as EPrints 3.4.5.
+    https://datacat.liverpool.ac.uk/cgi/oai2?verb=Identify returns 200 with repositoryName "DataCat:
+    The Research Data Catalogue", repositoryIdentifier datacat.liverpool.ac.uk, earliestDatestamp
+    2026-04-14T08:58:23Z, EPrints 3.4.4; verb=ListMetadataFormats returns didl, mets, oai_bibl,
+    oai_dc, rdf, uketd_dc and verb=ListSets returns 61,189 bytes of set structure.
+- id: shibboleth
+  conforms: true
+  operator: institution
+  evidence: >-
+    Institution-operated Shibboleth Identity Provider, registered in the UK Access Management
+    Federation and visible in eduGAIN. entityID urn:mace:eduserv.org.uk:athens:provider:liv.ac.uk,
+    mdui:DisplayName "University of Liverpool", scope liv.ac.uk, registrationAuthority
+    http://ukfederation.org.uk, Sirtfi asserted. The federation MDQ service serves it live:
+    http://mdq.ukfederation.org.uk/entities/urn%3Amace%3Aeduserv.org.uk%3Aathens%3Aprovider%3Aliv.ac.uk
+    returns 200, 9,390 bytes of SAML metadata (identically addressable as
+    {sha1}cc1504c8263760f8cc8d79d00afbb09c6a6b1c6b). The IdP also self-publishes its metadata at
+    https://shibboleth3.liv.ac.uk/idp/shibboleth (200, application/xml, 5,960 bytes, same entityID),
+    and https://shibboleth3.liv.ac.uk/idp/profile/SAML2/Redirect/SSO returns 400 to a parameterless
+    GET — a live Shibboleth IdP rejecting a malformed AuthnRequest. Two non-production entities
+    (https://shibboleth2.liv.ac.uk/idp/shibboleth "University of Liverpool (TEST do not use)" and
+    https://shibboleth3.liv.ac.uk/idp/shibboleth "University of Liverpool - Test") also appear in the
+    aggregate and are excluded here as placeholders.
+- id: saml
+  conforms: true
+  operator: institution
+  evidence: >-
+    SAML 2.0 on two independent institution-operated identity systems. (1) The Shibboleth IdP above
+    publishes SingleSignOnService bindings HTTP-Redirect, HTTP-POST and HTTP-POST-SimpleSign plus
+    SingleLogoutService and SAML1 SOAP ArtifactResolution/AttributeQuery on port 8443. (2) An
+    Active Directory Federation Services deployment publishes WS-Federation/SAML metadata at
+    https://fs.liverpool.ac.uk/FederationMetadata/2007-06/FederationMetadata.xml (200,
+    application/samlmetadata+xml, 83,212 bytes), entityID http://fs.liverpool.ac.uk/adfs/services/trust,
+    with SAML 2.0 HTTP-Redirect and HTTP-POST SingleSignOnService at
+    https://fs.liverpool.ac.uk/adfs/ls/. https://canvas.liverpool.ac.uk/ redirects into that AD FS
+    endpoint with a signed SAMLRequest, confirming it is the production SP-initiated flow. Ex Libris
+    registers https://liverpool.alma.exlibrisgroup.com/mng/login ("University of Liverpool - Alma")
+    and https://liverpool.primo.exlibrisgroup.com/mng/login ("University of Liverpool - PrimoVE") as
+    SAML service providers in the same federation, but those entities are registered under
+    "Ex Libris (UK) Limited" and are tenant surfaces, not Liverpool's own SAML engineering.
+- id: orcid
+  conforms: true
+  operator: institution
+  evidence: >-
+    ORCID member integration operated by the University of Liverpool Library through the UK ORCID
+    consortium. https://pub.orcid.org/v3.0/expanded-search/?q=affiliation-org-name:%22University%20of
+    %20Liverpool%22 returns 200 with num-found 13,225 ORCID records carrying the institution as an
+    affiliation. The library documents running the ORCID Affiliation Manager — writing affiliations
+    into researcher ORCID records by permission — at
+    https://libguides.liverpool.ac.uk/blog/ORCID-Affiliation-Project (200) and
+    https://libanswers.liverpool.ac.uk/faq/178148 (200), and documents the ORCID-to-Liverpool
+    Elements CRIS publication sync at https://www.liverpool.ac.uk/open-research/researcher-profiles/orcid/
+    (200).
+- id: datacite
+  conforms: true
+  operator: institution
+  evidence: >-
+    DataCite repository member since 2015. https://api.datacite.org/clients/bl.lpool returns 200 with
+    name "University of Liverpool", symbol BL.LPOOL, clientType repository, year 2015, created
+    2015-04-29, and domains liv.ac.uk, liverpool.ac.uk, datacat.liverpool.ac.uk,
+    livrepository.liverpool.ac.uk — the institution's own hosts.
+    https://api.datacite.org/prefixes?client-id=bl.lpool returns exactly one prefix, 10.17638.
+    https://api.datacite.org/dois?client-id=bl.lpool reports meta.total 16,405 DOIs, the first of
+    which (10.17638/03200178) resolves to
+    https://livrepository.liverpool.ac.uk/id/eprint/3200178 — i.e. the DOIs are minted against the
+    institution's own repository, not a vendor host.
+- id: crossref
+  conforms: true
+  operator: institution
+  evidence: >-
+    Two evidenced Crossref relationships, both scoped narrowly. (1) Liverpool University Press, the
+    University's own publishing house, is Crossref member 2165:
+    https://api.crossref.org/members/2165 returns 200, primary-name "Liverpool University Press",
+    location "Liverpool, United Kingdom", DOI prefix 10.3828 and 114,739 registered DOIs.
+    https://api.crossref.org/members?query=liverpool returns exactly this one member — the
+    institution itself registers no Crossref prefix of its own. (2) The institution holds Crossref
+    Funder Registry ID 501100000836, asserted in its ROR record
+    https://api.ror.org/v2/organizations/04xs57h96 alongside GRID grid.10025.36 and ISNI
+    0000 0004 1936 8470.
+- id: lti
+  conforms: true
+  operator: tenant
+  evidence: >-
+    A live LTI 1.3 platform key set is publicly readable on the institution's VLE host:
+    https://canvas.liverpool.ac.uk/api/lti/security/jwks returns 200 application/json with one RSA
+    key (1,408 bytes). canvas.liverpool.ac.uk is an institution CNAME onto Instructure Canvas
+    (108.139.47.25) and authenticates through the institution's own AD FS, so the deployment, the
+    host and the courses are Liverpool's — but the LTI implementation is Instructure's product, and
+    this conformance is recorded as tenant-operated, not as Liverpool's engineering. The Canvas
+    data API on the same host is closed: https://canvas.liverpool.ac.uk/api/v1/accounts returns 401.
+- id: scim
+  conforms: false
+  operator: none
+  evidence: >-
+    No SCIM 2.0 service provider configuration is publicly reachable.
+    https://www.liverpool.ac.uk/scim/v2/ServiceProviderConfig returns 404. Identity provisioning runs
+    behind AD FS and Entra ID and exposes no public SCIM endpoint.
+- id: oneroster
+  conforms: false
+  operator: none
+  evidence: >-
+    No 1EdTech OneRoster endpoint or roster export is published on any public institution host;
+    https://www.liverpool.ac.uk/ims/oneroster/v1p1/orgs returns 404. Student records sit behind SSO.
+- id: ed-fi
+  conforms: false
+  operator: none
+  evidence: >-
+    Ed-Fi is a US K-12 / state education agency data standard with no deployment in UK higher
+    education. No Ed-Fi ODS endpoint found on any liverpool.ac.uk or liv.ac.uk host.
+- id: caliper
+  conforms: false
+  operator: none
+  evidence: >-
+    No 1EdTech Caliper Analytics event store or sensor endpoint is publicly exposed. The Canvas
+    tenant's Caliper/Live Events configuration is not readable without a token
+    (https://canvas.liverpool.ac.uk/api/v1/accounts returns 401).
+- id: qti
+  conforms: false
+  operator: none
+  evidence: >-
+    No QTI item bank or QTI content package is served from a public institution host; assessment
+    content sits inside the SSO-gated Canvas VLE.

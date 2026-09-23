@@ -1,0 +1,130 @@
+generated: '2026-09-01'
+method: probed
+source: >-
+  Live probes of University of Liverpool hosts on 2026-09-01. No OpenAPI exists for any of these
+  surfaces, so every scheme below was read from an actual response — a discovery document, a SAML
+  metadata document, or the status code and body returned to an unauthenticated request.
+note: >-
+  The institution's public machine surfaces split cleanly in two. Everything scholarly — the two
+  EPrints OAI-PMH providers and the EPrints REST read interface — is open and anonymous, with no key,
+  no token and no registration. Everything else is behind the institution's own identity plane
+  (AD FS, Shibboleth, Entra ID) or a vendor tenant's, and there is no self-service key issuance or
+  developer registration anywhere on the public surface.
+summary:
+  types:
+  - none
+  - oauth2
+  - openIdConnect
+  - saml2
+  self_service_key_issuance: false
+  developer_registration: false
+schemes:
+- name: anonymous
+  type: none
+  description: >-
+    Unauthenticated public read. Applies to both OAI-PMH providers and to the EPrints REST dataset
+    listings on livrepository.liverpool.ac.uk.
+  operator: institution
+  probes:
+  - url: https://livrepository.liverpool.ac.uk/cgi/oai2?verb=Identify
+    status: 200
+    note: >-
+      200 with curl's default User-Agent or an OAI harvester UA; 403 (Apache "Forbidden", 295 bytes)
+      with a desktop-browser User-Agent. The host is live — a browser-UA probe alone misgrades it.
+  - url: https://datacat.liverpool.ac.uk/cgi/oai2?verb=Identify
+    status: 200
+  - url: https://livrepository.liverpool.ac.uk/rest/eprint/
+    status: 200
+    note: 7,456,493 bytes of eprint-id listing returned with no credentials.
+- name: adfs-oauth2-oidc
+  type: openIdConnect
+  description: >-
+    Institution-operated Active Directory Federation Services authorization server. Discovery
+    document is public and keyless; the endpoints behind it are not.
+  operator: institution
+  openIdConnectUrl: https://fs.liverpool.ac.uk/adfs/.well-known/openid-configuration
+  issuer: https://fs.liverpool.ac.uk/adfs
+  authorization_endpoint: https://fs.liverpool.ac.uk/adfs/oauth2/authorize/
+  token_endpoint: https://fs.liverpool.ac.uk/adfs/oauth2/token/
+  userinfo_endpoint: https://fs.liverpool.ac.uk/adfs/userinfo
+  jwks_uri: https://fs.liverpool.ac.uk/adfs/discovery/keys
+  id_token_signing_alg_values_supported: [ RS256 ]
+  token_endpoint_auth_methods_supported:
+  - client_secret_post
+  - client_secret_basic
+  - private_key_jwt
+  - windows_client_authentication
+  probes:
+  - url: https://fs.liverpool.ac.uk/adfs/.well-known/openid-configuration
+    status: 200
+  - url: https://fs.liverpool.ac.uk/adfs/discovery/keys
+    status: 200
+    note: One RSA signing key, 2,524 bytes.
+- name: entra-id-tenant
+  type: openIdConnect
+  description: >-
+    The institution's Microsoft Entra ID tenant, discoverable by its own domain. Microsoft hosts it;
+    the tenant is Liverpool's.
+  operator: federation
+  openIdConnectUrl: https://login.microsoftonline.com/liverpool.ac.uk/v2.0/.well-known/openid-configuration
+  issuer: https://login.microsoftonline.com/53255131-b129-4010-86e1-474bfd7e8076/v2.0
+  tenant_region_scope: EU
+  probes:
+  - url: https://login.microsoftonline.com/liverpool.ac.uk/v2.0/.well-known/openid-configuration
+    status: 200
+- name: shibboleth-saml2
+  type: saml2
+  description: >-
+    Institution-operated Shibboleth SAML 2.0 identity provider, published in the UK Access Management
+    Federation and self-published on its own host.
+  operator: federation
+  entity_id: urn:mace:eduserv.org.uk:athens:provider:liv.ac.uk
+  scope: liv.ac.uk
+  metadata_urls:
+  - http://mdq.ukfederation.org.uk/entities/urn%3Amace%3Aeduserv.org.uk%3Aathens%3Aprovider%3Aliv.ac.uk
+  - https://shibboleth3.liv.ac.uk/idp/shibboleth
+  bindings:
+  - urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
+  - urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
+  - urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST-SimpleSign
+  probes:
+  - url: http://mdq.ukfederation.org.uk/entities/urn%3Amace%3Aeduserv.org.uk%3Aathens%3Aprovider%3Aliv.ac.uk
+    status: 200
+  - url: https://shibboleth3.liv.ac.uk/idp/shibboleth
+    status: 200
+  - url: https://shibboleth3.liv.ac.uk/idp/profile/SAML2/Redirect/SSO
+    status: 400
+    note: Live IdP rejecting a parameterless AuthnRequest.
+- name: adfs-saml2
+  type: saml2
+  description: AD FS SAML 2.0 / WS-Federation metadata for the institution's primary SP-initiated login.
+  operator: institution
+  entity_id: http://fs.liverpool.ac.uk/adfs/services/trust
+  metadata_urls:
+  - https://fs.liverpool.ac.uk/FederationMetadata/2007-06/FederationMetadata.xml
+  sso_location: https://fs.liverpool.ac.uk/adfs/ls/
+  probes:
+  - url: https://fs.liverpool.ac.uk/FederationMetadata/2007-06/FederationMetadata.xml
+    status: 200
+    note: 83,212 bytes, application/samlmetadata+xml.
+gated_surfaces:
+- url: https://canvas.liverpool.ac.uk/api/v1/accounts
+  status: 401
+  operator: tenant
+  note: Instructure Canvas data API on the institution's VLE host — token required, no public program.
+- url: https://elements.liverpool.ac.uk/
+  status: 401
+  operator: tenant
+  note: Symplectic Elements CRIS — HTTP auth challenge on the landing page itself.
+- url: https://datacat.liverpool.ac.uk/rest/eprint/2481.xml
+  status: 401
+  operator: institution
+  note: >-
+    DataCat's EPrints REST item fetch requires auth even though the same REST root and the OAI-PMH
+    interface are open — the two EPrints deployments are configured differently.
+- url: https://news.liverpool.ac.uk/wp-json/wp/v2/posts
+  status: 401
+  operator: institution
+  note: >-
+    The institution's WordPress newsroom deliberately gates the WP REST API; the RSS feed at
+    https://news.liverpool.ac.uk/feed/ (200, application/rss+xml, 205,842 bytes) is the open surface.

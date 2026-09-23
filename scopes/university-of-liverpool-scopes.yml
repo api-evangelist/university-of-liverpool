@@ -1,0 +1,48 @@
+generated: '2026-09-01'
+method: probed
+source: https://fs.liverpool.ac.uk/adfs/.well-known/openid-configuration
+note: >-
+  The only scope vocabulary the University of Liverpool publishes machine-readably is the one
+  advertised by its own AD FS authorization server's OpenID Connect discovery document. Read
+  verbatim from that document on 2026-09-01. The scholarly surfaces (OAI-PMH, EPrints REST) are
+  anonymous and have no scope model at all; the Canvas, Elements, Alma/Primo and Talis scopes belong
+  to those vendors' products and are deliberately not restated here.
+issuer: https://fs.liverpool.ac.uk/adfs
+operator: institution
+scopes:
+- name: openid
+  description: Standard OpenID Connect scope requesting an ID token.
+- name: profile
+  description: Standard OIDC profile claims.
+- name: email
+  description: Standard OIDC email claim.
+- name: allatclaims
+  description: AD FS scope returning all claims configured for the relying party.
+- name: aza
+  description: AD FS broker/primary-refresh-token scope used by Microsoft client stacks.
+- name: user_impersonation
+  description: AD FS delegated access on behalf of the signed-in user.
+- name: logon_cert
+  description: AD FS certificate-based logon scope.
+- name: winhello_cert
+  description: AD FS Windows Hello for Business certificate enrolment scope.
+- name: vpn_cert
+  description: AD FS VPN certificate issuance scope.
+grant_types_supported:
+- authorization_code
+- refresh_token
+- client_credentials
+- urn:ietf:params:oauth:grant-type:jwt-bearer
+- implicit
+- password
+- srv_challenge
+- urn:ietf:params:oauth:grant-type:device_code
+- device_code
+response_types_supported:
+- code
+- id_token
+- code id_token
+- id_token token
+- code token
+- code id_token token
+self_service_registration: false

@@ -1,0 +1,57 @@
+generated: '2026-09-01'
+method: probed
+source: >-
+  Deliberate malformed requests against https://datacat.liverpool.ac.uk/cgi/oai2 on 2026-09-01;
+  the same envelope is returned by https://livrepository.liverpool.ac.uk/cgi/oai2.
+format: oai-pmh-error-element
+rfc9457: false
+note: >-
+  Both institution-operated OAI-PMH providers answer errors the way OAI-PMH 2.0 specifies rather
+  than the way HTTP does: the transport status stays 200 and the failure is carried in an <error>
+  element with a code attribute. Any agent grading these endpoints on status code alone will read a
+  rejected request as a success. This is the protocol's behaviour, not a Liverpool defect, but it is
+  the single most important thing to know before consuming these two surfaces.
+envelope:
+  http_status: 200
+  content_type: text/xml
+  element: /OAI-PMH/error
+  example: '<error code="badVerb">The value of the verb argument is not a legal OAI-PMH verb</error>'
+codes:
+- code: badVerb
+  probe: https://datacat.liverpool.ac.uk/cgi/oai2?verb=Bogus
+  http_status: 200
+  message: The value of the verb argument is not a legal OAI-PMH verb
+  retryable: false
+- code: badArgument
+  probe: https://datacat.liverpool.ac.uk/cgi/oai2?verb=GetRecord&identifier=...&metadataPrefix=oai_dc
+  http_status: 200
+  message: Bad verb argument
+  retryable: false
+  note: Returned when a required argument is missing or malformed.
+- code: idDoesNotExist
+  probe: https://datacat.liverpool.ac.uk/cgi/oai2?verb=GetRecord&identifier=oai:datacat.liverpool.ac.uk:99999999&metadataPrefix=oai_dc
+  http_status: 200
+  message: "'oai:datacat.liverpool.ac.uk:99999999' is not a valid item in this repository"
+  retryable: false
+- code: cannotDisseminateFormat
+  probe: https://datacat.liverpool.ac.uk/cgi/oai2?verb=ListRecords&metadataPrefix=bogus_fmt
+  http_status: 200
+  message: "Record not available as metadata type: 'bogus_fmt'"
+  retryable: false
+deleted_records:
+  policy: persistent
+  note: >-
+    Both repositories declare deletedRecord "persistent". A GetRecord on a withdrawn item returns 200
+    with <header status="deleted"> and no metadata block — verified on
+    oai:datacat.liverpool.ac.uk:2481. Harvesters must handle tombstones rather than treating a
+    metadata-less record as an error.
+transport_notes:
+- host: livrepository.liverpool.ac.uk
+  note: >-
+    Returns HTTP 403 (Apache "Forbidden") to a desktop-browser User-Agent on every path, including
+    /cgi/oai2 and /information.html, while returning 200 to curl's default UA and to OAI harvester
+    UAs. A 403 here is a User-Agent filter, not a dead host and not an authorization failure.
+- host: datacat.liverpool.ac.uk
+  note: >-
+    verb=ListSets returns 61,189 bytes; livrepository's verb=ListSets timed out at 25s on
+    2026-09-01 while every other verb answered promptly — treat ListSets there as slow, not absent.

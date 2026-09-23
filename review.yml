@@ -3,8 +3,104 @@ name: University of Liverpool
 description: University of Liverpool public developer/API footprint review for APIs.json cataloging.
 url: https://raw.githubusercontent.com/api-evangelist/university-of-liverpool/refs/heads/main/review.yml
 created: '2026-06-03'
-modified: '2026-06-03'
+modified: '2026-09-01'
 reviews:
+  - date: '2026-09-01'
+    rating: 3
+    summary: >-
+      University pipeline re-profile under the operator axis. The June 2026 profile was already free
+      of vendor misattribution — its two surfaces were both genuinely institution-hosted — but it
+      recorded only those two and missed the classes a host-based scan cannot see. This pass adds
+      four institution-operated surfaces the earlier review did not find: a keyless EPrints REST read
+      interface on the repository (GET /rest/eprint/ returns 7.4MB of eprint ids with no credentials),
+      an Active Directory Federation Services OAuth 2.0 / OpenID Connect authorization server at
+      fs.liverpool.ac.uk with public discovery and JWKS, a Shibboleth SAML 2.0 identity provider
+      registered in the UK Access Management Federation as
+      urn:mace:eduserv.org.uk:athens:provider:liv.ac.uk and served live by the federation MDQ, and the
+      institution's own Microsoft Entra ID tenant. Four registry memberships are now recorded
+      (DataCite BL.LPOOL / prefix 10.17638 / 16,405 DOIs resolving into livrepository, ORCID via the
+      Jisc UK consortium, ROR 04xs57h96, Crossref member 2165 through Liverpool University Press) and
+      four vendor tenancies are recorded as tenancies rather than credited as Liverpool engineering
+      (Ex Libris Alma/Primo VE, Talis Aspire, Instructure Canvas, Symplectic Elements). Seven of the
+      twelve education-regime domain standards are now evidenced from live endpoints. Two corrections
+      to the June review: sso.liverpool.ac.uk does not resolve because the IdP is at
+      shibboleth3.liv.ac.uk and fs.liverpool.ac.uk, and the 403 on livrepository.liverpool.ac.uk is a
+      User-Agent filter (403 to a browser UA, 200 to a harvester), not a dead host. No OpenAPI was
+      generated: every contract behind these surfaces is a product contract shared by every EPrints,
+      Canvas, Alma, Talis and Elements deployment, and belongs in the vendor's repo, not here.
+    endpoints:
+      - url: https://livrepository.liverpool.ac.uk/cgi/oai2?verb=Identify
+        status: 200
+        note: 'EPrints 3.4.5; repositoryName "The University of Liverpool Repository". 200 to a harvester UA, 403 to a browser UA.'
+      - url: https://livrepository.liverpool.ac.uk/rest/eprint/
+        status: 200
+        note: Keyless EPrints REST dataset listing, 7,456,493 bytes.
+      - url: https://datacat.liverpool.ac.uk/cgi/oai2?verb=Identify
+        status: 200
+        note: 'EPrints 3.4.4; repositoryName "DataCat: The Research Data Catalogue".'
+      - url: https://datacat.liverpool.ac.uk/rest/eprint/2481.xml
+        status: 401
+        note: DataCat gates REST item fetch though its REST root and OAI-PMH are open.
+      - url: https://fs.liverpool.ac.uk/adfs/.well-known/openid-configuration
+        status: 200
+        note: 'Institution AD FS OIDC discovery; issuer https://fs.liverpool.ac.uk/adfs, RS256, 9 scopes.'
+      - url: https://fs.liverpool.ac.uk/adfs/discovery/keys
+        status: 200
+        note: Live RSA signing key set, 2,524 bytes.
+      - url: https://fs.liverpool.ac.uk/FederationMetadata/2007-06/FederationMetadata.xml
+        status: 200
+        note: 83,212 bytes application/samlmetadata+xml, entityID http://fs.liverpool.ac.uk/adfs/services/trust.
+      - url: http://mdq.ukfederation.org.uk/entities/urn%3Amace%3Aeduserv.org.uk%3Aathens%3Aprovider%3Aliv.ac.uk
+        status: 200
+        note: 'UK Access Management Federation MDQ, 9,390 bytes, DisplayName "University of Liverpool", scope liv.ac.uk.'
+      - url: https://shibboleth3.liv.ac.uk/idp/shibboleth
+        status: 200
+        note: IdP self-published SAML metadata, same entityID.
+      - url: https://login.microsoftonline.com/liverpool.ac.uk/v2.0/.well-known/openid-configuration
+        status: 200
+        note: Entra ID tenant 53255131-b129-4010-86e1-474bfd7e8076, region EU.
+      - url: https://api.datacite.org/clients/bl.lpool
+        status: 200
+        note: 'DataCite repository member since 2015; domains include livrepository and datacat.'
+      - url: https://api.datacite.org/dois?client-id=bl.lpool
+        status: 200
+        note: 16,405 DOIs on prefix 10.17638; first resolves to livrepository.liverpool.ac.uk/id/eprint/3200178.
+      - url: https://api.ror.org/v2/organizations/04xs57h96
+        status: 200
+        note: 'ROR record; Funder Registry 501100000836, GRID grid.10025.36, ISNI 0000 0004 1936 8470.'
+      - url: https://api.crossref.org/members/2165
+        status: 200
+        note: 'Liverpool University Press, prefix 10.3828, 114,739 DOIs. The institution itself registers no Crossref prefix.'
+      - url: https://liverpool.rl.talis.com/index.json
+        status: 200
+        note: Talis Aspire tenant serving RDF/JSON naming the institution and five faculties.
+      - url: https://liverpool.primo.exlibrisgroup.com/discovery/search?vid=44LIV_INST:LIV
+        status: 200
+        note: Ex Libris Primo VE tenant; registered in UK federation under the Ex Libris entity.
+      - url: https://canvas.liverpool.ac.uk/api/lti/security/jwks
+        status: 200
+        note: Live LTI 1.3 platform JWKS on the institution's Canvas tenant.
+      - url: https://canvas.liverpool.ac.uk/api/v1/accounts
+        status: 401
+        note: Canvas data API closed.
+      - url: https://elements.liverpool.ac.uk/
+        status: 401
+        note: Symplectic Elements CRIS, auth challenge on the landing page.
+      - url: https://news.liverpool.ac.uk/feed/
+        status: 200
+        note: Institution WordPress newsroom RSS, 205,842 bytes.
+      - url: https://news.liverpool.ac.uk/wp-json/wp/v2/posts
+        status: 401
+        note: WP REST API deliberately gated while RSS stays open.
+      - url: https://www.liverpool.ac.uk/.well-known/security.txt
+        status: 404
+        note: No security.txt, llms.txt or apis.json served on the main site.
+      - url: https://data.liverpool.ac.uk/
+        status: 0
+        note: No open data portal host; DataCat is the research-data surface.
+      - url: https://liverpool.figshare.com/
+        status: 202
+        note: '*.figshare.com is wildcard DNS (a nonsense subdomain resolves identically). No Figshare tenancy evidenced; none recorded.'
   - date: '2026-06-03'
     rating: 2
     summary: >-
